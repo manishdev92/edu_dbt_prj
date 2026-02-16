@@ -1,0 +1,12 @@
+edu_dbt_prj:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: edu
+      password: edu
+      port: 6543
+      dbname: edu_warehouse
+      schema: stg
+      threads: 4

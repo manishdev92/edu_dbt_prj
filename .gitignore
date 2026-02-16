@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# dbt
+analytics/target/
+analytics/logs/
+analytics/dbt_packages/
+analytics/.user.yml
+
+# Elementary
+edr_target/
+.elementary/
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Docker volumes / misc
+*.log

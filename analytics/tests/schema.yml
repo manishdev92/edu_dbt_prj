@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: stg_lms_students
+    columns:
+      - name: student_id
+        tests: [not_null, unique]
+
+  - name: stg_billing_enrollments
+    columns:
+      - name: enrollment_id
+        tests: [not_null, unique]
+      - name: student_id
+        tests: [not_null]
+
+  - name: fact_learning_activity_daily
+    columns:
+      - name: student_id
+        tests: [not_null]
+      - name: course_id
+        tests: [not_null]
+      - name: activity_date
+        tests: [not_null]
+
+  - name: mart_student_lifecycle_daily
+    columns:
+      - name: student_id
+        tests: [not_null]
+      - name: as_of_date
+        tests: [not_null]
+      - name: lifecycle_stage
+        tests:
+          - accepted_values:
+              values: ['prospect','enrolled','active','at_risk','completed','certified']
+
+  - name: mart_certification_kpis
+    columns:
+      - name: certification_id
+        tests: [not_null]
+      - name: attempt_no
+        tests: [not_null]

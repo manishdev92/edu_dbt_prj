@@ -1,0 +1,53 @@
+version: 2
+
+sources:
+  - name: raw_lms
+    schema: raw_lms
+    tables:
+      - name: students
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+      - name: course_activity
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+      - name: course_completion
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+  - name: raw_cert
+    schema: raw_cert
+    tables:
+      - name: exam_attempts
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+      - name: certificates
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+  - name: raw_billing
+    schema: raw_billing
+    tables:
+      - name: enrollments
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}
+
+      - name: payments
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 2, period: hour}
+          error_after: {count: 6, period: hour}

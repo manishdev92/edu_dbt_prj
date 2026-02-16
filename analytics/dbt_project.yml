@@ -1,0 +1,22 @@
+name: edu_dbt_prj
+version: "1.0"
+config-version: 2
+
+profile: edu_dbt_prj
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+
+models:
+  edu_dbt_prj:
+    staging:
+      +schema: stg
+    intermediate:
+      +schema: int
+    marts:
+      +schema: marts
+
+snapshots:
+  edu_dbt_prj:
+    +schema: snapshots

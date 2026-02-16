@@ -1,0 +1,76 @@
+name: dbt CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: edu
+          POSTGRES_PASSWORD: edu
+          POSTGRES_DB: edu_warehouse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U edu -d edu_warehouse"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Init schemas + raw tables
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=edu psql -h localhost -U edu -d edu_warehouse -c "CREATE SCHEMA IF NOT EXISTS raw_lms; CREATE SCHEMA IF NOT EXISTS raw_cert; CREATE SCHEMA IF NOT EXISTS raw_billing; CREATE SCHEMA IF NOT EXISTS stg; CREATE SCHEMA IF NOT EXISTS stg_stg; CREATE SCHEMA IF NOT EXISTS stg_marts; CREATE SCHEMA IF NOT EXISTS snapshots;"
+          PGPASSWORD=edu psql -h localhost -U edu -d edu_warehouse -f warehouse/ddl/raw_schema.sql
+
+      - name: Generate + load sample data
+        env:
+          EDU_PG_PORT: "5432"
+        run: |
+          python ingestion/generate_sample_data.py
+          python ingestion/load_to_warehouse.py
+
+      - name: Write dbt profile for CI
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<'PROF'
+          edu_dbt_prj:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: localhost
+                user: edu
+                password: edu
+                port: 5432
+                dbname: edu_warehouse
+                schema: stg
+                threads: 4
+          PROF
+
+      - name: dbt build + freshness
+        run: |
+          cd analytics
+          dbt deps
+          dbt build
+          dbt source freshness
