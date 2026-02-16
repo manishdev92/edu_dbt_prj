@@ -50,8 +50,9 @@ It produces business-ready marts:
 
 ----------
 
-# 🏗 Architecture
-```merimaid
+## 🏗 Architecture
+
+```mermaid
 flowchart LR
   %% =========================
   %% POC (Local) Architecture
@@ -83,7 +84,7 @@ flowchart LR
     subgraph OBS["observability"]
       DBT --> FR["dbt source freshness\nSLA checks"]
       DBT --> TST["dbt tests\nschema and accepted values"]
-      TST --> E1[("Elementary tables\nschema stg")]
+      TST --> E1["Elementary tables\nschema stg"]
       FR --> E1
       E1 --> REP["Elementary HTML report\nedr_target/elementary_report.html"]
     end
@@ -112,6 +113,7 @@ flowchart LR
   B -. "Ingestion replaced by" .-> X
   DBT -. "Same dbt patterns" .-> Z2
   OBS -. "Observability scaled" .-> Z4
+
 
 
 ### 🔹 POC (Local)
